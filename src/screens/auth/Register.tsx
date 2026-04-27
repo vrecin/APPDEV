@@ -1,21 +1,43 @@
-import { useState } from 'react';
+import { useState, FC } from 'react';
 import { Text, TouchableOpacity, View, StyleSheet, StatusBar } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import CustomButton from '../../components/CustomButton';
 import CustomTextInput from '../../components/CustomTextInput';
 import { ROUTES } from '../../utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { userRegister } from '../../app/reducers/auth';
 import CheckBox from '@react-native-community/checkbox';
+import { AuthStackParamList } from '../../navigations/AuthNav';
 
-const Register = () => {
+type RegisterScreenNavigationProp = StackNavigationProp<AuthStackParamList, typeof ROUTES.REGISTER>;
+
+interface RegisterScreenProps {
+  navigation: RegisterScreenNavigationProp;
+}
+
+interface AuthState {
+  auth: {
+    isLoading: boolean;
+    isError: boolean;
+    errorMessage: string | null;
+  };
+}
+
+const DEEP     = '#2E073F';
+const VIOLET   = '#A976D1';
+const LAVENDER = '#F0E8F7';
+const MUTED    = '#6A5177';
+const CARD     = '#FFFFFF';
+const BG       = '#F6F1F8';
+const BORDER   = '#E0CCE9';
+
+const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [validationError, setValidationError] = useState('');
-  const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { isLoading, isError, errorMessage } = useSelector(state => state.auth);
+  const { isLoading, isError, errorMessage } = useSelector((state: AuthState) => state.auth);
 
   return (
     <View style={styles.container}>
@@ -67,7 +89,7 @@ const Register = () => {
           textStyle={styles.inputText}
         />
 
-        {/* Terms — mirrors the "Forgot password?" row position in Login */}
+        {/* Terms */}
         <View style={styles.checkboxWrap}>
           <CheckBox
             value={agreeTerms}
@@ -122,14 +144,6 @@ const Register = () => {
   );
 };
 
-const DEEP     = '#2E073F';
-const VIOLET   = '#A976D1';
-const LAVENDER = '#F0E8F7';
-const MUTED    = '#6A5177';
-const CARD     = '#FFFFFF';
-const BG       = '#F6F1F8';
-const BORDER   = '#E0CCE9';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -138,8 +152,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
-
-  /* ── Orbs ── */
   orb1: {
     position: 'absolute',
     width: 320,
@@ -170,8 +182,6 @@ const styles = StyleSheet.create({
     top: '35%',
     right: -40,
   },
-
-  /* ── Brand Mark ── */
   brandMark: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -207,8 +217,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 3,
   },
-
-  /* ── Header ── */
   headerContainer: {
     alignItems: 'center',
     marginBottom: 28,
@@ -243,8 +251,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     letterSpacing: 0.3,
   },
-
-  /* ── Card ── */
   card: {
     width: '100%',
     backgroundColor: CARD,
@@ -282,32 +288,26 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: BORDER,
   },
-
-  /* ── Checkbox (mirrors forgotWrap in Login) ── */
   checkboxWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    marginTop: 8,
-    marginBottom: 4,
-    gap: 8,
+    marginBottom: 16,
   },
   checkbox: {
-    width: 18,
-    height: 18,
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
   checkboxLabel: {
+    flex: 1,
     fontFamily: 'Roboto',
     fontSize: 12,
     color: MUTED,
-    fontWeight: '500',
   },
   checkboxLink: {
     color: VIOLET,
     fontWeight: '600',
   },
-
-  /* ── Error ── */
   errorText: {
     color: '#c0392b',
     fontFamily: 'Roboto',
@@ -316,8 +316,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: 'center',
   },
-
-  /* ── Button ── */
   registerButton: {
     marginTop: 16,
     marginBottom: 24,
@@ -332,19 +330,18 @@ const styles = StyleSheet.create({
     elevation: 8,
   },
   registerButtonText: {
-    color: LAVENDER,
-    fontFamily: 'Playfair Display',
-    textAlign: 'center',
+    fontFamily: 'Roboto',
+    fontSize: 14,
     fontWeight: '700',
-    fontSize: 16,
-    letterSpacing: 3,
+    color: CARD,
+    textAlign: 'center',
+    letterSpacing: 1,
   },
-
-  /* ── Divider ── */
   dividerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 16,
+    gap: 12,
   },
   dividerLine: {
     flex: 1,
@@ -353,11 +350,8 @@ const styles = StyleSheet.create({
   },
   dividerText: {
     color: VIOLET,
-    marginHorizontal: 10,
     fontSize: 12,
   },
-
-  /* ── Login Row ── */
   loginRow: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -365,31 +359,22 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontFamily: 'Roboto',
+    fontSize: 13,
     color: MUTED,
-    fontSize: 14,
   },
   loginLink: {
     fontFamily: 'Roboto',
-    color: DEEP,
-    fontWeight: '800',
-    fontSize: 14,
-    letterSpacing: 0.5,
-    textDecorationLine: 'underline',
-    textDecorationColor: VIOLET,
-  },
-
-  /* ── Footer ── */
-  footerText: {
-    color: MUTED,
-    fontFamily: 'Roboto',
-    fontSize: 9,
-    letterSpacing: 3,
-    marginTop: 28,
+    fontSize: 13,
+    color: VIOLET,
     fontWeight: '700',
+  },
+  footerText: {
+    fontFamily: 'Roboto',
+    fontSize: 10,
+    color: MUTED,
+    marginTop: 32,
+    letterSpacing: 2,
   },
 });
 
 export default Register;
-
-
-

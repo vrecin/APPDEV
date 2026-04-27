@@ -1,12 +1,24 @@
+import React, { FC, ReactNode } from 'react';
 import {
   ActivityIndicator,
   Dimensions,
   Text,
   TouchableOpacity,
   View,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
 } from 'react-native';
 
-const CustomButton = ({
+interface CustomButtonProps {
+  containerStyle?: ViewStyle;
+  label: string;
+  textStyle?: TextStyle;
+  onPress: () => void;
+  loading?: boolean;
+}
+
+const CustomButton: FC<CustomButtonProps> = ({
   containerStyle,
   label,
   textStyle,

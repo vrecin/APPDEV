@@ -6,4 +6,4 @@ export default {
   BLISS: 'https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcSiUbjIyPV41y5BJlEm5NVzPXrM4A4P8x_unXpMRWGZt1Nc-7JBdhVa6bht9NxrxhFu85JliKOYyQf1MZXX3ltGQYy9HXTofb1s95jL9uw9ZX4NOaR3hajfQFo',
   MELANCHOLY: 'https://artofscent.com/cdn/shop/files/1_8_1500x.png?v=1737959180',
   CHERRY: 'https://artofscent.com/cdn/shop/files/20_7eb27c3d-3bff-4a1e-a292-ed7d304beff0_394x.jpg?v=1755065238'
-};
+} as const;

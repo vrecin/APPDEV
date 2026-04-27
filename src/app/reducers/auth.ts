@@ -14,14 +14,36 @@ import {
   USER_LOGOUT_REQUEST,
 } from '../actions';
 
-const INITIAL_STATE = {
-  data: null, // { token, user, roles } when logged in
+interface AuthData {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    username?: string;
+  };
+  roles?: string[];
+}
+
+interface AuthState {
+  data: AuthData | null;
+  isLoading: boolean;
+  isError: boolean;
+  errorMessage: string | null;
+}
+
+interface AuthAction {
+  type: string;
+  payload?: any;
+}
+
+const INITIAL_STATE: AuthState = {
+  data: null,
   isLoading: false,
   isError: false,
   errorMessage: null,
 };
 
-export default function reducer(state = INITIAL_STATE, action) {
+export default function authReducer(state: AuthState = INITIAL_STATE, action: AuthAction): AuthState {
   console.log('[Auth Reducer]', action.type, action.payload ? '(has payload)' : '');
   switch (action.type) {
     case USER_LOGIN_REQUEST:
@@ -102,7 +124,7 @@ export default function reducer(state = INITIAL_STATE, action) {
   }
 }
 
-export const userLogin = payload => ({ type: USER_LOGIN, payload });
-export const userRegister = payload => ({ type: USER_REGISTER, payload });
+export const userLogin = (payload: any) => ({ type: USER_LOGIN, payload });
+export const userRegister = (payload: any) => ({ type: USER_REGISTER, payload });
 export const userLogout = () => ({ type: USER_LOGOUT });
 export const resetLogin = () => ({ type: USER_LOGIN_RESET });

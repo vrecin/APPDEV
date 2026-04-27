@@ -1,10 +1,10 @@
-import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { persistReducer, persistStore } from 'redux-persist';
+import { applyMiddleware, combineReducers, createStore, Store } from 'redux';
+import { persistReducer, persistStore, Persistor } from 'redux-persist';
 import autoMergeLevel1 from 'redux-persist/lib/stateReconciler/autoMergeLevel1';
-import createSagaMiddleware from 'redux-saga';
+import createSagaMiddleware, { SagaMiddleware } from 'redux-saga';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import auth from '../reducers/auth';
+import auth from './auth';
 
 // Config
 const sagaMiddleware = createSagaMiddleware();
@@ -30,7 +30,13 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(rootPersistConfig, rootReducer);
 
-export default () => {
+interface StoreConfig {
+  store: Store;
+  persistor: Persistor;
+  runSaga: SagaMiddleware['run'];
+}
+
+export default function configureAppStore(): StoreConfig {
   let store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
 
   let persistor = persistStore(store);
@@ -38,4 +44,4 @@ export default () => {
   const runSaga = sagaMiddleware.run;
 
   return { store, persistor, runSaga };
-};
+}

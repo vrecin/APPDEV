@@ -1,26 +1,26 @@
 import { verifyInstallation } from 'nativewind';
-import React from 'react';
+import React, { FC } from 'react';
 import { View } from 'react-native';
 
-import AppNavigationNi from './src/navigations';
+import RootNavigation from './src/navigations';
 
 import rootSaga from './src/app/sagas';
-import configureStore from './src/app/reducers';
+import configureAppStore from './src/app/reducers';
 
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-const { store, persistor, runSaga } = configureStore();
+const { store, persistor, runSaga } = configureAppStore();
 runSaga(rootSaga);
 
-const App = () => {
+const App: FC = () => {
   verifyInstallation();
 
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <View className="flex-1">
-          <AppNavigationNi />
+          <RootNavigation />
         </View>
       </PersistGate>
     </Provider>

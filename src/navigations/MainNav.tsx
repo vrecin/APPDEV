@@ -1,12 +1,22 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Text, View, StyleSheet } from 'react-native';
 
 import Home from '../screens/HomeScreen';
 import Shop from '../screens/ShopScreen';
 import Cart from '../screens/CartScreen';
 import Profile from '../screens/ProfileScreen';
+import { ROUTES } from '../utils';
 
-const Tab = createBottomTabNavigator();
+export type MainStackParamList = {
+  [ROUTES.HOME]: undefined;
+  [ROUTES.SHOP]: undefined;
+  [ROUTES.CART]: undefined;
+  [ROUTES.PROFILE]: undefined;
+};
+
+export type MainNavigationProp = BottomTabNavigationProp<MainStackParamList>;
+
+const Tab = createBottomTabNavigator<MainStackParamList>();
 
 const DEEP     = '#2E073F';
 const VIOLET   = '#A976D1';
@@ -14,14 +24,19 @@ const LAVENDER = '#F0E8F7';
 const MUTED    = '#9B7BAE';
 const BORDER   = '#E0CCE9';
 
-const TAB_ICONS = {
-  Home:    { active: '⌂',  inactive: '⌂'  },
-  Shop:    { active: '✦',  inactive: '✦'  },
-  Cart:    { active: '◻',  inactive: '◻'  },
-  Profile: { active: '◈',  inactive: '◈'  },
+const TAB_ICONS: Record<string, { active: string; inactive: string }> = {
+  [ROUTES.HOME]:    { active: '⌂',  inactive: '⌂'  },
+  [ROUTES.SHOP]:    { active: '✦',  inactive: '✦'  },
+  [ROUTES.CART]:    { active: '◻',  inactive: '◻'  },
+  [ROUTES.PROFILE]: { active: '◈',  inactive: '◈'  },
 };
 
-const TabIcon = ({ name, focused }) => {
+interface TabIconProps {
+  name: string;
+  focused: boolean;
+}
+
+const TabIcon = ({ name, focused }: TabIconProps) => {
   const icon = TAB_ICONS[name];
   return (
     <View style={[styles.iconWrap, focused && styles.iconWrapActive]}>
@@ -48,43 +63,44 @@ const MainNavigation = () => {
           height: 72,
           paddingBottom: 10,
           paddingTop: 8,
-          shadowColor: DEEP,
-          shadowOffset: { width: 0, height: -4 },
-          shadowOpacity: 0.06,
-          shadowRadius: 12,
-          elevation: 12,
-        },
-        tabBarLabelStyle: {
-          fontFamily: 'Roboto',
-          fontSize: 10,
-          fontWeight: '700',
-          letterSpacing: 0.8,
-          textTransform: 'uppercase',
-          marginTop: 2,
         },
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home"    component={Home} />
-      <Tab.Screen name="Shop"    component={Shop} />
-      <Tab.Screen name="Cart"    component={Cart} />
-      <Tab.Screen name="Profile" component={Profile} />
+      <Tab.Screen 
+        name={ROUTES.HOME} 
+        component={Home}
+        options={{ title: 'Home' }}
+      />
+      <Tab.Screen 
+        name={ROUTES.SHOP} 
+        component={Shop}
+        options={{ title: 'Shop' }}
+      />
+      <Tab.Screen 
+        name={ROUTES.CART} 
+        component={Cart}
+        options={{ title: 'Cart' }}
+      />
+      <Tab.Screen 
+        name={ROUTES.PROFILE} 
+        component={Profile}
+        options={{ title: 'Profile' }}
+      />
     </Tab.Navigator>
   );
 };
 
 const styles = StyleSheet.create({
   iconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   iconWrapActive: {
     backgroundColor: LAVENDER,
-    borderWidth: 1,
-    borderColor: BORDER,
   },
   icon: {
     fontSize: 18,

@@ -8,4 +8,4 @@ export default {
   SHOP: 'Shop',
   CART: 'Cart',
   PROFILE: 'Profile',
-};
+} as const;

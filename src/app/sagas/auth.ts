@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select } from 'redux-saga/effects';
+import { call, put, takeEvery, select, SagaIterator } from 'redux-saga/effects';
 import { authLogin, authRegister, authLogout } from '../api/auth';
 
 import {
@@ -16,11 +16,31 @@ import {
   USER_LOGOUT_ERROR,
 } from '../actions';
 
-function getAuthState(state) {
+interface AuthState {
+  auth: {
+    data: { token: string } | null;
+  };
+}
+
+interface LoginPayload {
+  email: string;
+  password: string;
+}
+
+interface RegisterPayload {
+  firstName?: string;
+  lastName?: string;
+  username?: string;
+  email: string;
+  password: string;
+  phoneNumber?: string;
+}
+
+function getAuthState(state: AuthState) {
   return state.auth;
 }
 
-export function* userLoginAsync(action) {
+export function* userLoginAsync(action: any): SagaIterator {
   console.log('[Saga] LOGIN started', { email: action.payload?.email });
   yield put({ type: USER_LOGIN_REQUEST });
   console.log('[Saga] LOGIN_REQUEST dispatched');
@@ -31,13 +51,13 @@ export function* userLoginAsync(action) {
     yield put({ type: USER_LOGIN_COMPLETED, payload: response });
     console.log('[Saga] USER_LOGIN_COMPLETED dispatched -> will be stored in Redux (and persisted)');
   } catch (error) {
-    console.log('[Saga] LOGIN failed:', error?.message);
-    yield put({ type: USER_LOGIN_ERROR, payload: error.message });
+    console.log('[Saga] LOGIN failed:', (error as Error)?.message);
+    yield put({ type: USER_LOGIN_ERROR, payload: (error as Error).message });
     console.log('[Saga] USER_LOGIN_ERROR dispatched -> not stored');
   }
 }
 
-export function* userRegisterAsync(action) {
+export function* userRegisterAsync(action: any): SagaIterator {
   const { firstName, lastName, username, email, password, phoneNumber } = action.payload || {};
   console.log('[Saga] REGISTER started', { email, username });
   yield put({ type: USER_REGISTER_REQUEST });
@@ -53,13 +73,13 @@ export function* userRegisterAsync(action) {
     yield put({ type: USER_LOGIN_COMPLETED, payload: loginResponse });
     console.log('[Saga] USER_LOGIN_COMPLETED dispatched after register -> stored, redirect to home');
   } catch (error) {
-    console.log('[Saga] REGISTER failed:', error?.message);
-    yield put({ type: USER_REGISTER_ERROR, payload: error.message });
+    console.log('[Saga] REGISTER failed:', (error as Error)?.message);
+    yield put({ type: USER_REGISTER_ERROR, payload: (error as Error).message });
     console.log('[Saga] USER_REGISTER_ERROR dispatched -> not stored');
   }
 }
 
-export function* userLogoutAsync() {
+export function* userLogoutAsync(): SagaIterator {
   console.log('[Saga] LOGOUT started');
   const auth = yield select(getAuthState);
   const token = auth?.data?.token;
@@ -77,20 +97,20 @@ export function* userLogoutAsync() {
     yield put({ type: USER_LOGOUT_COMPLETED });
     console.log('[Saga] USER_LOGOUT_COMPLETED dispatched -> state cleared, not stored');
   } catch (error) {
-    console.log('[Saga] LOGOUT API failed (clearing state anyway):', error?.message);
-    yield put({ type: USER_LOGOUT_ERROR, payload: error.message });
+    console.log('[Saga] LOGOUT API failed (clearing state anyway):', (error as Error)?.message);
+    yield put({ type: USER_LOGOUT_ERROR, payload: (error as Error).message });
     console.log('[Saga] USER_LOGOUT_ERROR dispatched -> state cleared anyway');
   }
 }
 
-export function* userLogin() {
+export function* userLogin(): SagaIterator {
   yield takeEvery(USER_LOGIN, userLoginAsync);
 }
 
-export function* userRegister() {
+export function* userRegister(): SagaIterator {
   yield takeEvery(USER_REGISTER, userRegisterAsync);
 }
 
-export function* userLogout() {
+export function* userLogout(): SagaIterator {
   yield takeEvery(USER_LOGOUT, userLogoutAsync);
 }
